@@ -149,7 +149,9 @@ function transcribir(){
 
  
  function ponerLetra(x,y,color,letra){
-  ctx2.font = cambiarTamanio(900,tamanioLetra);
+  ctx2.textBaseline = "middle";
+  ctx2.textAlign = "center";
+  ctx2.font = cambiarTamanio(1000,tamanioLetra+5);
   ctx2.fillStyle=cambiarColor(color[0],color[1],color[2]);
   ctx2.fillText(letra,x,y+tamanioLetra);
  
@@ -157,12 +159,12 @@ function transcribir(){
       }
 
  function cambiarTamanio(bold,size){
-let setter= bold+" "+size+"px "+"arial";
+let setter= bold+" "+size+"px "+"bodoni";
 return setter.toString();
  }
 
  function cambiarColor(r,g,b){
-let setter= "rgb("+r+","+g+","+b+")";
+let setter= "rgb("+r+","+g+","+b+",1)";
 return setter.toString();
  }
 
