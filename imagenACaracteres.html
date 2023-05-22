@@ -12,9 +12,9 @@
 <div id="formulario" class="formulario">
     <form >
         <input id="inputField" type="file" >
-        <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput">Tamaño de la letra
-        <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput">Ancho de salida
-        <input type="color" name="colorFondo" id="colorFondo">Color de fondo
+        <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput" value="15">Tamaño de la letra
+        <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="1500">Ancho de salida
+        <input type="color" name="colorFondo" id="colorFondo" value="#FFFFFF">Color de fondo
         <input type="color" name="colorLetra" id="colorLetra">Color de letra
         </form>
 
@@ -138,32 +138,44 @@ acumulado=0;
  
   ctx2.fillStyle=colorLetra;
  
-  if(promedioAcumulado<50){
+  if(promedioAcumulado<25){
+    ctx2.font = cambiarTamanio(1000,tamanioLetra);
+    ctx2.fillText("M",x,y+tamanioLetra);
+  } else if(promedioAcumulado>=25 && promedioAcumulado<50){
     ctx2.font = cambiarTamanio(900,tamanioLetra);
     ctx2.fillText("H",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=50 && promedioAcumulado<100){
+  } else if(promedioAcumulado>=50 && promedioAcumulado<75){
+    ctx2.font = cambiarTamanio(800,tamanioLetra);
+    ctx2.fillText("N",x,y+tamanioLetra);
+  } else if(promedioAcumulado>=75 && promedioAcumulado<100){
     ctx2.font = cambiarTamanio(700,tamanioLetra);
+    ctx2.fillText("Z",x,y+tamanioLetra);
+  } else if(promedioAcumulado>=100 && promedioAcumulado<125){
+    ctx2.font = cambiarTamanio(600,tamanioLetra);
     ctx2.fillText("Y",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=100 && promedioAcumulado<150){
+  } else if(promedioAcumulado>=125 && promedioAcumulado<150){
     ctx2.font = cambiarTamanio(500,tamanioLetra);
-    ctx2.fillText("O",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=150 && promedioAcumulado<170){
+    ctx2.fillText("J",x,y+tamanioLetra);
+  } else if(promedioAcumulado>=150 && promedioAcumulado<175){
+    ctx2.font = cambiarTamanio(400,tamanioLetra);
+    ctx2.fillText("C",x,y+tamanioLetra);
+  }
+  else if(promedioAcumulado>=175 && promedioAcumulado<200){
     ctx2.font = cambiarTamanio(300,tamanioLetra);
-    ctx2.fillText("U",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=170 && promedioAcumulado<200){
-    ctx2.font = cambiarTamanio(200,tamanioLetra);
     ctx2.fillText("/",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=200 && promedioAcumulado<230){
+  }
+  else if(promedioAcumulado>=200 && promedioAcumulado<225){
     ctx2.font = cambiarTamanio(200,tamanioLetra);
     ctx2.fillText("*",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=230 && promedioAcumulado<250){
-    ctx2.font = cambiarTamanio(200,tamanioLetra);
+  }
+  else if(promedioAcumulado>=225 && promedioAcumulado<250){
+    ctx2.font = cambiarTamanio(100,tamanioLetra);
     ctx2.fillText(".",x,y+tamanioLetra);
   }
       }
 }
  function cambiarTamanio(bold,size){
-let setter= bold+" "+size+"px "+"arial";
+let setter= bold+" "+(size)+"px "+"blacker";
 return setter.toString();
  }
 
