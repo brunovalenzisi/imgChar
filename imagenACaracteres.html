@@ -166,13 +166,19 @@ acumulado=0;
   }
   else if(promedioAcumulado>=200 && promedioAcumulado<225){
     ctx2.font = cambiarTamanio(200,tamanioLetra);
-    ctx2.fillText("*",x,y+tamanioLetra);
+    ctx2.fillText("-",x,y+tamanioLetra);
   }
   else if(promedioAcumulado>=225 && promedioAcumulado<250){
+    ctx2.font = cambiarTamanio(100,tamanioLetra);
+    ctx2.fillText("*",x,y+tamanioLetra);
+  }
+  else if(promedioAcumulado>=250){
     ctx2.font = cambiarTamanio(100,tamanioLetra);
     ctx2.fillText(".",x,y+tamanioLetra);
   }
       }
+      
+      
 }
  function cambiarTamanio(bold,size){
 let setter= bold+" "+(size)+"px "+"blacker";
