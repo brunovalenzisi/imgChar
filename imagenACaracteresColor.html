@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<div id="formulario" class="formulario">
+    <form >
+        <input id="inputField" type="file" >
+        <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput">Tamaño de la letra
+        <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput">Ancho de salida
+        <input style="width: 100px;margin-top: 20px;" type="text" id="firma">firma
+        <input type="color" name="colorFondo" id="colorFondo" value="#ffffff">Color de fondo
+        </form>
+
+
+        </div>
+        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="convertir">convertir</button>
+        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="descargar">descargar</button>
+    <div>
+    <img style="margin-top: 30px; margin-left: 30px;"  id="entrada" src="" alt="no disponible">
+    <img style="margin-top: 30px; margin-left: 30px;"  id="salida" src="" alt="no disponible">
+</div>
+    
+    
+    
+    
+    <script>
+var firma = document.getElementById("firma");
+var anchoSalidaInput = document.getElementById("anchoSalidaInput");
+var tamanioLetraInput = document.getElementById("tamanioLetraInput");
+var inputColorFondo=document.getElementById("colorFondo");
+var inputField = document.getElementById("inputField");       
+var inputElement = document.getElementById("convertir");
+inputElement.addEventListener("click", handleFiles, false);
+var boton = document.getElementById("descargar");
+boton.addEventListener("click", download, false);
+var canvas1 = document.createElement("CANVAS");
+var canvas2 = document.createElement("CANVAS");
+var ctx1 = canvas1.getContext("2d",{willReadFrequently: true});
+var ctx2 = canvas2.getContext("2d",{willReadFrequently: true});
+let fileList=[];
+let img;
+let imgURL;
+let imgDibujada = new Image();
+let URLSalida;
+let anchoDeSalida = 3100
+let altoDeSalida
+let infoImg = [];  
+let pixelColor;
+let tamanioLetra;
+
+
+let relacionDeAspecto;
+let salidaURL;
+let colorFondo;
+let colorLetra;
+let contadorLetra=0;
+
+
+
+
+function handleFiles() {
+setearAnchoSalida();
+setearTamanioLetra();
+setearColorFondo();
+
+  fileList[0] = inputField.files;
+  img = fileList[0];
+  if (img.length !== 0) {cargar();}
+ }
+
+function cargar(){
+    var oMyBlob = new Blob(img);
+    imgURL = URL.createObjectURL(oMyBlob);
+    imgDibujada.src = imgURL;
+    imgDibujada.addEventListener("load",dibujar,false);
+    entrada.src = imgURL;}
+
+function dibujar(){
+
+relacionDeAspecto = imgDibujada.width/imgDibujada.height;
+altoDeSalida = anchoDeSalida / relacionDeAspecto;
+canvas1.width = anchoDeSalida;
+canvas1.height = altoDeSalida;
+canvas2.width = anchoDeSalida;
+canvas2.height = altoDeSalida;
+ctx2.fillStyle=colorFondo;
+ctx2.fillRect(0,0,anchoDeSalida,altoDeSalida);
+let fA = anchoDeSalida / imgDibujada.width;
+let fD = altoDeSalida / imgDibujada.height; 
+ctx1.save();
+ctx1.transform(fA,0,0,fD,0,0);
+ctx1.drawImage(imgDibujada,0,0);
+ctx1.restore();
+pixelColor = ctx1.getImageData(0,0,anchoDeSalida,altoDeSalida);
+transcribir();
+salidaURL= canvas2.toDataURL("image/jpeg",1.0);
+salida.src = salidaURL;
+
+}
+
+function cambioDeColor(){
+  for(let i = 0; i<pixelColor.data.length; i= i+4 ){
+    let pesoRGB = pixelColor.data[i]+pixelColor.data[i+1]+pixelColor.data[i+2]; 
+    pixelColor.data[i]=Math.floor(pesoRGB/3);
+    pixelColor.data[i+1]=Math.floor(pesoRGB/3);
+    pixelColor.data[i+2]=Math.floor(pesoRGB/3); 
+  }
+  ctx1.putImageData(pixelColor,0,0);
+  pixelColor=[];
+}
+
+function transcribir(){
+  
+  
+  for(let i = 0; i<canvas1.height; i=i+tamanioLetra){
+  for(let j=0; j<canvas1.width;j=j+tamanioLetra){
+  var porcionDeimagen = ctx1.getImageData(j,i,tamanioLetra,tamanioLetra);
+  let R=0
+  let G=0
+  let B=0
+  for ( let z=0; z<porcionDeimagen.data.length;z=z+4 ){
+   R=R+porcionDeimagen.data[z];
+   G=G+porcionDeimagen.data[z+1];
+   B=B+porcionDeimagen.data[z+2];
+  };
+  let promedioR=R/(porcionDeimagen.data.length/4);
+  let promedioG=G/(porcionDeimagen.data.length/4);
+  let promedioB=B/(porcionDeimagen.data.length/4);
+  let RGB=[promedioR,promedioG,promedioB];
+  let letra=firma.value[contadorLetra];
+  ponerLetra(j,i,RGB,seleccionarLetra());
+   
+}
+ }
+
+ function seleccionarLetra(){
+    let caracter=firma.value[contadorLetra];
+    contadorLetra++;
+    if(contadorLetra>(firma.value.length-1)){contadorLetra=0};
+    return caracter
+ }
+
+ 
+ function ponerLetra(x,y,color,letra){
+  ctx2.font = cambiarTamanio(900,tamanioLetra);
+  ctx2.fillStyle=cambiarColor(color[0],color[1],color[2]);
+  ctx2.fillText(letra,x,y+tamanioLetra);
+ 
+  }
+      }
+
+ function cambiarTamanio(bold,size){
+let setter= bold+" "+size+"px "+"arial";
+return setter.toString();
+ }
+
+ function cambiarColor(r,g,b){
+let setter= "rgb("+r+","+g+","+b+")";
+return setter.toString();
+ }
+
+ function download(){
+    const downloadInstance = document.createElement("a");
+    downloadInstance.href = salidaURL;
+    downloadInstance.download= img[0].name;
+    document.body.appendChild(downloadInstance);
+    downloadInstance.click();
+    document.body.removeChild(downloadInstance);
+ }
+
+ function setearTamanioLetra (){
+    tamanioLetra = eval(tamanioLetraInput.value);
+
+ }
+
+ function setearColorFondo(){
+    colorFondo= inputColorFondo.value
+ };
+
+ function setearColorLetra(){
+    colorLetra= inputColorLetra.value
+ };
+
+function setearAnchoSalida(){
+anchoDeSalida=anchoSalidaInput.value
+}
+
+  
+
+
+    </script>
+    
+  
+</body>
+</html>
