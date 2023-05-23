@@ -37,6 +37,25 @@
     
     <script>
 
+class Columna {
+  letras = [];
+  
+  add = (letra) => {
+    return this.letras.splice(0, 0, letra);
+  }
+  remove = () => {
+    return this.letras.pop();
+  }
+  isempty = () => {
+    return this.letras.length === 0;
+  }
+  empty = () => {
+    this.letras.length = 0;
+  }
+  size = () => {
+    return this.letras.length;
+  }
+}
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
 var tamanioLetraInput = document.getElementById("tamanioLetraInput");
@@ -67,6 +86,7 @@ let relacionDeAspecto;
 let salidaURL;
 let colorFondo;
 let colorLetra;
+let columnas=[];
 
 
 
@@ -107,7 +127,9 @@ ctx1.restore();
 pixelColor = ctx1.getImageData(0,0,anchoDeSalida,altoDeSalida);
 cambioDeColor();
 transcribir();
-salida.appendChild(canvas1);
+salida.appendChild(canvas2);
+crearColumnas();
+loop();
 
 
 
@@ -171,6 +193,32 @@ for (let z=0; z<porcionDeimagen.data.length;z=z+4){
 
 function setearAnchoSalida(){
 anchoDeSalida=anchoSalidaInput.value
+}
+
+function crearColumnas(){
+  for(let i=0; i<canvas2.width/tamanioLetra;i++){
+   columnas[i] = new Columna();
+  }
+}
+
+function loop(){
+  window.setTimeout(loop,1);
+matrix();
+}
+function matrix(){
+  for(let i=0,separacion=0; i<columnas.length;i++,separacion+=tamanioLetra){
+    if(columnas[i].isempty()){
+  columnas[i].add({x:separacion,y:0,vel:1});
+};
+  }
+
+ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+ctx2.fillText("H",columnas[10].letras[0].x,columnas[10].letras[0].y);
+columnas[10].letras[0].y++;
+
+
+
+
 }
 
   
