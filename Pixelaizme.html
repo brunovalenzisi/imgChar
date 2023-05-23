@@ -89,8 +89,8 @@ canvas1.width = anchoDeSalida;
 canvas1.height = altoDeSalida;
 canvas2.width = anchoDeSalida;
 canvas2.height = altoDeSalida;
-ctx2.fillStyle=colorFondo;
-ctx2.fillRect(0,0,anchoDeSalida,altoDeSalida);
+
+
 let fA = anchoDeSalida / imgDibujada.width;
 let fD = altoDeSalida / imgDibujada.height; 
 ctx1.save();
@@ -100,7 +100,7 @@ ctx1.restore();
 pixelColor = ctx1.getImageData(0,0,anchoDeSalida,altoDeSalida);
 cambioDeColor();
 transcribir();
-salidaURL= canvas2.toDataURL("image/jpeg",1.0);
+salidaURL= canvas1.toDataURL("image/jpeg",1.0);
 salida.src = salidaURL;
 
 }
@@ -121,75 +121,23 @@ function transcribir(){
   for(let i = 0; i<canvas1.height; i=i+tamanioLetra){
   for(let j=0; j<canvas1.width;j=j+tamanioLetra){
   var porcionDeimagen = ctx1.getImageData(j,i,tamanioLetra,tamanioLetra);
-  for (let z=0; z<porcionDeimagen.data.length;z=z+4 ){
+  for (let z=0; z<porcionDeimagen.data.length;z=z+4){
     acumulado = acumulado+porcionDeimagen.data[z]; 
     promedioAcumulado= Math.floor(acumulado/(z/4));
   }
-  ponerLetra(j,i);
-
-promedioAcumulado=0;
-acumulado=0;
+for (let z=0; z<porcionDeimagen.data.length;z=z+4){
+     porcionDeimagen.data[z]=promedioAcumulado;
+     porcionDeimagen.data[z+1]=promedioAcumulado;
+     porcionDeimagen.data[z+2]=promedioAcumulado; 
+  }
+  ctx1.putImageData(porcionDeimagen,j,i);
+  promedioAcumulado=0;
+  acumulado=0;
 }
  }
-
- 
- function ponerLetra(x,y){
-  ctx2.font = cambiarTamanio(900,tamanioLetra);
- 
-  ctx2.fillStyle=colorLetra;
- 
-  if(promedioAcumulado<15){
-    ctx2.font = cambiarTamanio(1000,tamanioLetra);
-    ctx2.fillText("M",x,y+tamanioLetra);
-    
-  } 
-  else if(promedioAcumulado>=15 && promedioAcumulado<25){
-    ctx2.font = cambiarTamanio(900,tamanioLetra);
-    ctx2.fillText("H",x,y+tamanioLetra);
-  } 
-  else if(promedioAcumulado>=25 && promedioAcumulado<50){
-    ctx2.font = cambiarTamanio(900,tamanioLetra);
-    ctx2.fillText("N",x,y+tamanioLetra);
-  }else if(promedioAcumulado>=50 && promedioAcumulado<75){
-    ctx2.font = cambiarTamanio(800,tamanioLetra);
-    ctx2.fillText("Z",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=75 && promedioAcumulado<100){
-    ctx2.font = cambiarTamanio(700,tamanioLetra);
-    ctx2.fillText("Y",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=100 && promedioAcumulado<125){
-    ctx2.font = cambiarTamanio(600,tamanioLetra);
-    ctx2.fillText("J",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=125 && promedioAcumulado<150){
-    ctx2.font = cambiarTamanio(500,tamanioLetra);
-    ctx2.fillText("C",x,y+tamanioLetra);
-  } else if(promedioAcumulado>=150 && promedioAcumulado<175){
-    ctx2.font = cambiarTamanio(400,tamanioLetra);
-    ctx2.fillText("#",x,y+tamanioLetra);
-  }
-  else if(promedioAcumulado>=175 && promedioAcumulado<200){
-    ctx2.font = cambiarTamanio(300,tamanioLetra);
-    ctx2.fillText("/",x,y+tamanioLetra);
-  }
-  else if(promedioAcumulado>=200 && promedioAcumulado<225){
-    ctx2.font = cambiarTamanio(200,tamanioLetra);
-    ctx2.fillText("-",x,y+tamanioLetra);
-  }
-  else if(promedioAcumulado>=225 && promedioAcumulado<250){
-    ctx2.font = cambiarTamanio(100,tamanioLetra);
-    ctx2.fillText("*",x,y+tamanioLetra);
-  }
-  else if(promedioAcumulado>=250){
-    ctx2.font = cambiarTamanio(100,tamanioLetra);
-    ctx2.fillText(".",x,y+tamanioLetra);
-  }
-      }
-      
-      
+     
 }
- function cambiarTamanio(bold,size){
-let setter= bold+" "+(size)+"px "+"blacker";
-return setter.toString();
- }
+
 
  function download(){
     const downloadInstance = document.createElement("a");
