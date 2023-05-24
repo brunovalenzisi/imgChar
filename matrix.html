@@ -82,12 +82,7 @@ class Columna {
   }
   setearVelocidad = () => {
     for(let i=0;i<this.size();i++){
-      if(this.letras[i].Y>canvas2.height*0.3 && this.letras[i].Y<canvas2.height*0.4 ){
-        this.letras[i].Velocidad=0.2
-      } else if(this.letras[i].Y>=canvas2.height*0.4){
-        this.letras[i].Velocidad=0.5
-      }
-
+  this.letras[i].Velocidad=t*255/ctx1.getImageData(this.X,this.letras[i].Y,1,1).data[0];
     }
     
   }
