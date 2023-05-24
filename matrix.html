@@ -39,12 +39,22 @@
 
 class Columna {
   letras = [];
+  X;
   
-  add = (letra) => {
-    return this.letras.splice(0, 0, letra);
+
+  add = (velocidad) => {
+    if(this.isempty()){
+      return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
+    } else if(this.letras[0].Y>5){
+        return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
+    }
+    
   }
   remove = () => {
-    return this.letras.pop();
+    if(this.letras[this.letras.length-1].Y>canvas2.height+20){
+      return this.letras.pop();
+    }
+    
   }
   isempty = () => {
     return this.letras.length === 0;
@@ -55,7 +65,34 @@ class Columna {
   size = () => {
     return this.letras.length;
   }
+  dibujarColumna = () => {
+    
+  for(let i=0;i<this.size();i++){
+  ctx2.fillText(this.letras[i].Caracter,this.X,this.letras[i].Y)
+  }
+    
+  }
+  moverColumna = () => {
+    for(let i=0;i<this.size();i++){
+      this.letras[i].Y+=this.letras[i].Velocidad*t
+    }
+    
+  }
+  /*setearVelocidad = () => {
+    
+  }*/
+  caracterRandom = () => { 
+     
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*$&#@/?";
+  const charactersLength = characters.length;
+  let result = "";
+  result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  return result;
 }
+
+}
+
+
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
 var tamanioLetraInput = document.getElementById("tamanioLetraInput");
@@ -87,6 +124,7 @@ let salidaURL;
 let colorFondo;
 let colorLetra;
 let columnas=[];
+let t=1
 
 
 
@@ -196,25 +234,26 @@ anchoDeSalida=anchoSalidaInput.value
 }
 
 function crearColumnas(){
-  for(let i=0; i<canvas2.width/tamanioLetra;i++){
+  for(let i=0,separacion=0; i<canvas2.width/tamanioLetra;i++,separacion+=tamanioLetra){
    columnas[i] = new Columna();
+   columnas[i].X=separacion
   }
 }
 
 function loop(){
-  window.setTimeout(loop,1);
+  window.setTimeout(loop,t);
 matrix();
 }
 function matrix(){
-  for(let i=0,separacion=0; i<columnas.length;i++,separacion+=tamanioLetra){
-    if(columnas[i].isempty()){
-  columnas[i].add({x:separacion,y:0,vel:1});
-};
-  }
+  ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+  for(let i=0;i<columnas.length;i++){
+    
+columnas[i].add(1);
+columnas[i].dibujarColumna();
+columnas[i].moverColumna();
+columnas[i].remove();
 
-ctx2.clearRect(0,0,canvas2.width,canvas2.height);
-ctx2.fillText("H",columnas[10].letras[0].x,columnas[10].letras[0].y);
-columnas[10].letras[0].y++;
+  }
 
 
 
