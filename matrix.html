@@ -51,7 +51,7 @@ class Columna {
     
   }
   remove = () => {
-    if(this.letras[this.letras.length-1].Y>canvas2.height+20){
+    if(this.letras[this.letras.length-1].Y>canvas2.height+10){
       return this.letras.pop();
     }
     
@@ -82,10 +82,10 @@ class Columna {
   }
   setearVelocidad = () => {
     for(let i=0;i<this.size();i++){
-      if(this.letras[i].Y>canvas2.height*0.5){
-        this.letras[i].Velocidad=0.3
-      } else if(this.letras[i].Y>canvas2.height*0.7){
-        this.letras[i].Velocidad=3
+      if(this.letras[i].Y>canvas2.height*0.3 && this.letras[i].Y<canvas2.height*0.4 ){
+        this.letras[i].Velocidad=0.2
+      } else if(this.letras[i].Y>=canvas2.height*0.4){
+        this.letras[i].Velocidad=0.5
       }
 
     }
