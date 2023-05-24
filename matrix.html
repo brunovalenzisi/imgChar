@@ -45,7 +45,7 @@ class Columna {
   add = (velocidad) => {
     if(this.isempty()){
       return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
-    } else if(this.letras[0].Y>5){
+    } else if(this.letras[0].Y>20){
         return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
     }
     
@@ -112,7 +112,7 @@ let img;
 let imgURL;
 let imgDibujada = new Image();
 let URLSalida;
-let anchoDeSalida = 3100
+let anchoDeSalida;
 let altoDeSalida
 let infoImg = [];  
 let pixelColor;
@@ -248,7 +248,7 @@ function matrix(){
   ctx2.clearRect(0,0,canvas2.width,canvas2.height);
   for(let i=0;i<columnas.length;i++){
     
-columnas[i].add(1);
+columnas[i].add(2);
 columnas[i].dibujarColumna();
 columnas[i].moverColumna();
 columnas[i].remove();
