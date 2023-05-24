@@ -10,7 +10,7 @@
 <body>
 
 <div id="formulario" class="formulario">
-    <form >
+    <form id="parametros" >
         <input id="inputField" type="file" >
         <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput" value="15">Tamaño de la letra
         <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="1500">Ancho de salida
@@ -66,6 +66,8 @@ class Columna {
     return this.letras.length;
   }
   dibujarColumna = () => {
+    ctx2.font = cambiarTamanio(900,tamanioLetra);
+    ctx2.fillStyle=colorLetra;
     
   for(let i=0;i<this.size();i++){
   ctx2.fillText(this.letras[i].Caracter,this.X,this.letras[i].Y)
@@ -78,9 +80,17 @@ class Columna {
     }
     
   }
-  /*setearVelocidad = () => {
+  setearVelocidad = () => {
+    for(let i=0;i<this.size();i++){
+      if(this.letras[i].Y>canvas2.height*0.5){
+        this.letras[i].Velocidad=0.3
+      } else if(this.letras[i].Y>canvas2.height*0.7){
+        this.letras[i].Velocidad=3
+      }
+
+    }
     
-  }*/
+  }
   caracterRandom = () => { 
      
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*$&#@/?";
@@ -92,7 +102,7 @@ class Columna {
 
 }
 
-
+var parametros = document.getElementById("parametros")
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
 var tamanioLetraInput = document.getElementById("tamanioLetraInput");
@@ -101,6 +111,8 @@ var inputColorLetra=document.getElementById("colorLetra");
 var inputField = document.getElementById("inputField");       
 var inputElement = document.getElementById("convertir");
 inputElement.addEventListener("click", handleFiles, false);
+parametros.addEventListener("change",setearColorLetra,setearColorFondo,crearColumnas,false);
+
 
 
 var canvas1 = document.createElement("CANVAS");
@@ -239,18 +251,24 @@ function crearColumnas(){
    columnas[i].X=separacion
   }
 }
+function cambiarTamanio(bold,size){
+let setter= bold+" "+(size)+"px "+"blacker";
+return setter.toString();
+ }
 
 function loop(){
   window.setTimeout(loop,t);
 matrix();
 }
 function matrix(){
-  ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+  ctx2.fillStyle=colorFondo;
+  ctx2.fillRect(0,0,canvas2.width,canvas2.height);
   for(let i=0;i<columnas.length;i++){
     
-columnas[i].add(2);
+columnas[i].add(0.5);
 columnas[i].dibujarColumna();
 columnas[i].moverColumna();
+columnas[i].setearVelocidad();
 columnas[i].remove();
 
   }
