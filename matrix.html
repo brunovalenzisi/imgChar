@@ -14,8 +14,8 @@
         <input id="inputField" type="file" >
         <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput" value="15">Tamaño de la letra
         <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="1500">Ancho de salida
-        <input type="color" name="colorFondo" id="colorFondo" value="#FFFFFF">Color de fondo
-        <input type="color" name="colorLetra" id="colorLetra">Color de letra
+        <input type="color" name="colorFondo" id="colorFondo" value="#000000">Color de fondo
+        <input type="color" name="colorLetra" id="colorLetra" value="#008000">Color de letra
         </form>
 
 
@@ -45,7 +45,7 @@ class Columna {
   add = (velocidad) => {
     if(this.isempty()){
       return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
-    } else if(this.letras[0].Y>20){
+    } else if(this.letras[0].Y>tamanioLetra+20){
         return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
     }
     
@@ -81,8 +81,11 @@ class Columna {
     
   }
   setearVelocidad = () => {
+
     for(let i=0;i<this.size();i++){
-  this.letras[i].Velocidad=t*255/ctx1.getImageData(this.X,this.letras[i].Y,1,1).data[0];
+  if(this.letras[i].Y<canvas2.height){
+this.letras[i].Velocidad=t+5*ctx1.getImageData(this.X,this.letras[i].Y,1,1).data[0]/255;}
+  
     }
     
   }
@@ -97,7 +100,7 @@ class Columna {
 
 }
 
-var parametros = document.getElementById("parametros")
+
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
 var tamanioLetraInput = document.getElementById("tamanioLetraInput");
@@ -106,7 +109,7 @@ var inputColorLetra=document.getElementById("colorLetra");
 var inputField = document.getElementById("inputField");       
 var inputElement = document.getElementById("convertir");
 inputElement.addEventListener("click", handleFiles, false);
-parametros.addEventListener("change",setearColorLetra,setearColorFondo,crearColumnas,false);
+
 
 
 
@@ -141,6 +144,7 @@ setearAnchoSalida();
 setearTamanioLetra();
 setearColorFondo();
 setearColorLetra();
+crearColumnas();
   fileList[0] = inputField.files;
   img = fileList[0];
   if (img.length !== 0) {cargar();}
@@ -241,6 +245,7 @@ anchoDeSalida=anchoSalidaInput.value
 }
 
 function crearColumnas(){
+  columnas=[];
   for(let i=0,separacion=0; i<canvas2.width/tamanioLetra;i++,separacion+=tamanioLetra){
    columnas[i] = new Columna();
    columnas[i].X=separacion
