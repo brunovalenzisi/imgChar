@@ -45,7 +45,7 @@ class Columna {
   add = (velocidad) => {
     if(this.isempty()){
       return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
-    } else if(this.letras[0].Y>tamanioLetra+20){
+    } else if(this.letras[0].Y>tamanioLetra*1.2){
         return this.letras.splice(0, 0, {Y:0 , Caracter: this.caracterRandom() , Velocidad: velocidad});
     }
     
