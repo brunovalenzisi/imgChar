@@ -13,14 +13,15 @@
     <form id="parametros" >
         <input id="inputField" type="file" >
         <input style="width: 20px;margin-top: 20px;" type="text" id="tamanioLetraInput" value="15">Tamaño de la letra
-        <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="1500">Ancho de salida
+        <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="640">Ancho de salida
         <input type="color" name="colorFondo" id="colorFondo" value="#000000">Color de fondo
         <input type="color" name="colorLetra" id="colorLetra" value="#008000">Color de letra
         </form>
 
 
         </div>
-        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="convertir">convertir</button>
+        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="convertir">Iniciar animacion</button>
+        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="grabar">Grabar</button>
         
         </form>
     
@@ -34,12 +35,16 @@
     
     
     
-    
+  <script src="https://unpkg.com/h264-mp4-encoder/embuild/dist/h264-mp4-encoder.web.js"></script>
     <script>
+
+
+
 
 class Columna {
   letras = [];
   X;
+  lleno=false
   
 
   add = (velocidad) => {
@@ -58,6 +63,13 @@ class Columna {
   }
   isempty = () => {
     return this.letras.length === 0;
+  }
+
+  isFull = () => {if(!this.isempty()){if(this.letras[this.letras.length-1].Y>canvas2.height){
+    this.lleno=true
+     } 
+  }
+    
   }
   empty = () => {
     this.letras.length = 0;
@@ -89,6 +101,8 @@ this.letras[i].Velocidad=t+5*ctx1.getImageData(this.X,this.letras[i].Y,1,1).data
     }
     
   }
+
+ 
   caracterRandom = () => { 
      
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*$&#@/?";
@@ -99,7 +113,7 @@ this.letras[i].Velocidad=t+5*ctx1.getImageData(this.X,this.letras[i].Y,1,1).data
 }
 
 }
-
+let botonGrabar = document.getElementById("grabar");
 
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
@@ -109,10 +123,21 @@ var inputColorLetra=document.getElementById("colorLetra");
 var inputField = document.getElementById("inputField");       
 var inputElement = document.getElementById("convertir");
 inputElement.addEventListener("click", handleFiles, false);
+botonGrabar.addEventListener("click", cambiarEstado, false);
 
 
 
 
+
+
+function cambiarEstado(){
+if (recording==true){
+  botonGrabar.innerHTML="Detener";
+  finalizarGrabacion();}
+  else{botonGrabar.innerHTML="Grabar";
+}
+}
+let recording = true;
 var canvas1 = document.createElement("CANVAS");
 var canvas2 = document.createElement("CANVAS");
 var ctx1 = canvas1.getContext("2d",{willReadFrequently: true});
@@ -123,7 +148,7 @@ let imgURL;
 let imgDibujada = new Image();
 let URLSalida;
 let anchoDeSalida;
-let altoDeSalida
+let altoDeSalida;
 let infoImg = [];  
 let pixelColor;
 let tamanioLetra;
@@ -135,6 +160,8 @@ let colorFondo;
 let colorLetra;
 let columnas=[];
 let t=1
+
+
 
 
 
@@ -165,6 +192,8 @@ canvas1.width = anchoDeSalida;
 canvas1.height = altoDeSalida;
 canvas2.width = anchoDeSalida;
 canvas2.height = altoDeSalida;
+preload();
+
 
 
 let fA = anchoDeSalida / imgDibujada.width;
@@ -218,14 +247,7 @@ for (let z=0; z<porcionDeimagen.data.length;z=z+4){
 }
 
 
- function download(){
-    const downloadInstance = document.createElement("a");
-    downloadInstance.href = salidaURL;
-    downloadInstance.download= img[0].name;
-    document.body.appendChild(downloadInstance);
-    downloadInstance.click();
-    document.body.removeChild(downloadInstance);
- }
+
 
  function setearTamanioLetra (){
     tamanioLetra = eval(tamanioLetraInput.value);
@@ -255,26 +277,76 @@ function cambiarTamanio(bold,size){
 let setter= bold+" "+(size)+"px "+"blacker";
 return setter.toString();
  }
+function preload(){
+  
+  HME.createH264MP4Encoder().then(enc => {
+    // Must be a multiple of 2.
+    
+    
+    encoder = enc;
+    if(canvas2.width % 2==0){encoder.width=canvas2.width}else{encoder.width=canvas2.width-1};
+    if(canvas2.height % 2==0){encoder.height=canvas2.height}else{encoder.height=canvas2.height-1};
+    encoder.outputFilename = "matrixVideo"
+    encoder.frameRate = 60;
+    encoder.kbps = 50000;
+    encoder.groupOfPictures=10;
+    encoder.initialize(); 
+    
+})
+}
+
+function grabarFotograma(){
+if (recording){
+  encoder.addFrameRgba(ctx2.getImageData(0,0,encoder.width,encoder.height).data)
+}
+}
+
+function finalizarGrabacion(){
+  recording=false;
+  encoder.finalize();
+  const uint8Array = encoder.FS.readFile(encoder.outputFilename);
+  const descargador = document.createElement("a");
+  descargador.href = URL.createObjectURL(new Blob([uint8Array],{type: "video/mp4"}));
+  descargador.download = encoder.outputFilename;
+  descargador.click();
+  descargador.delete();
+  preload();
+
+
+}
+function todasLlenas(){
+  let estanTodasllenas=false;
+  let contador=0;
+  for(let i=0;i<columnas.length;i++){
+if(columnas[i].lleno){contador++}
+  }
+  if(contador>=columnas.length){estanTodasllenas=true}
+  return estanTodasllenas
+}
+ 
 
 function loop(){
   window.setTimeout(loop,t);
 matrix();
 }
 function matrix(){
+ 
   ctx2.fillStyle=colorFondo;
   ctx2.fillRect(0,0,canvas2.width,canvas2.height);
   for(let i=0;i<columnas.length;i++){
-    
-columnas[i].add(0.5);
-columnas[i].dibujarColumna();
+
+if(!todasLlenas()){columnas[i].add(0.5);}
+if(!columnas[i].isempty()){columnas[i].dibujarColumna();
 columnas[i].moverColumna();
 columnas[i].setearVelocidad();
 columnas[i].remove();
+columnas[i].isFull();} else {
+  columnas[i].lleno=false
+}
 
   }
 
-
-
+grabarFotograma();
 
 }
 
