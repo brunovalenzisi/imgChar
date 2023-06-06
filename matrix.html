@@ -15,12 +15,13 @@
         <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="640">Ancho de salida
         <input type="color" name="colorFondo" id="colorFondo" value="#000000">Color de fondo
         <input type="color" name="colorLetra" id="colorLetra" value="#008000">Color de letra
+        <input type="checkbox" name="grabar" id="grabar">Grabar ciclo
         </form>
 
 
         </div>
         <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="convertir">Iniciar animacion</button>
-        <button style="width: 80px; justify-content:center ;display: inline; margin-top: 10px;" id="grabar">Grabar</button>
+        
         
         </form>
     
@@ -142,21 +143,10 @@ var inputColorLetra=document.getElementById("colorLetra");
 var inputField = document.getElementById("inputField");       
 var inputElement = document.getElementById("convertir");
 inputElement.addEventListener("click", handleFiles, false);
-botonGrabar.addEventListener("click", cambiarEstado, false);
 
 
 
 
-
-
-function cambiarEstado(){
-if (recording==true){
-  botonGrabar.innerHTML="Detener";
-  finalizarGrabacion();}
-  else{botonGrabar.innerHTML="Grabar";
-}
-}
-let recording = true;
 var canvas1 = document.createElement("CANVAS");
 var canvas2 = document.createElement("CANVAS");
 
@@ -317,13 +307,13 @@ function preload(){
 }
 
 function grabarFotograma(){
-if (recording && encoder){
+if (botonGrabar.checked && encoder){
   encoder.addFrameRgba(ctx2.getImageData(0,0,encoder.width,encoder.height).data)
 }
 }
 
 function finalizarGrabacion(){
-  recording=false;
+  botonGrabar.checked=false;
   encoder.finalize();
   const uint8Array = encoder.FS.readFile(encoder.outputFilename);
   const descargador = document.createElement("a");
@@ -358,7 +348,7 @@ if(columnas[i].isempty()){contador++}
 
 function resetear(){
 if(todasVacias()){
-  if(recording){finalizarGrabacion();}
+  if(botonGrabar.checked){finalizarGrabacion();}
   columnas=[];
   crearColumnas();
 }
