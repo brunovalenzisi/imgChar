@@ -15,6 +15,7 @@
         <input style="width: 20px;margin-top: 20px;" type="text" id="anchoSalidaInput" value="640">Ancho de salida
         <input type="color" name="colorFondo" id="colorFondo" value="#000000">Color de fondo
         <input type="color" name="colorLetra" id="colorLetra" value="#008000">Color de letra
+        <input type="number" style="width: 45px;" name="velocidad" id="velocidad" value="1">Velocidad de animacion
         <input type="checkbox" name="grabar" id="grabar">Grabar ciclo
         </form>
 
@@ -88,7 +89,7 @@ class Columna {
       ctx2.shadowColor = "#FFFFFF";
       ctx2.shadowOffsetX = 0;
       ctx2.shadowOffsetY = 0;
-      ctx2.shadowBlur = 20;
+      ctx2.shadowBlur = 15;
     
     }
     else{ctx2.fillStyle=colorLetra;}
@@ -134,7 +135,7 @@ return seleccionador>0.95
 
 
 let botonGrabar = document.getElementById("grabar");
-
+let velocidad = document.getElementById("velocidad");
 var salida=document.getElementById("salida");      
 var anchoSalidaInput = document.getElementById("anchoSalidaInput");
 var tamanioLetraInput = document.getElementById("tamanioLetraInput");
@@ -143,7 +144,7 @@ var inputColorLetra=document.getElementById("colorLetra");
 var inputField = document.getElementById("inputField");       
 var inputElement = document.getElementById("convertir");
 inputElement.addEventListener("click", handleFiles, false);
-
+velocidad.addEventListener("input", cambiarVelocidad,false)
 
 
 
@@ -169,7 +170,7 @@ let salidaURL;
 let colorFondo;
 let colorLetra;
 let columnas=[];
-let t=1.5
+let t=velocidad.value;
 let encoder;
 
 
@@ -352,6 +353,10 @@ if(todasVacias()){
   columnas=[];
   crearColumnas();
 }
+}
+
+function cambiarVelocidad(){
+  t=velocidad.value;
 }
  
 
